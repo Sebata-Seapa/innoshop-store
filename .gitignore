@@ -8,8 +8,9 @@
 /.vscode
 /.claude
 .env
-.env.backup
-.env.production
+.env.*
+!.env.example
+!.env.production
 .phpunit.result.cache
 .DS_Store
 Homestead.json
