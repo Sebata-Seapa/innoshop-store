@@ -1,0 +1,29 @@
+FROM dunglas/frankenphp:latest
+
+# Install PHP extensions
+RUN install-php-extensions \
+    zip \
+    gd \
+    bcmath \
+    pdo \
+    pdo_mysql \
+    opcache
+
+# Set working directory
+WORKDIR /app
+
+# Copy composer files
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --optimize-autoloader --no-scripts --no-interaction
+
+# Copy the rest of the application
+COPY . .
+
+# Build frontend assets
+RUN npm install && npm run production
+
+# Set permissions
+RUN mkdir -p storage/framework/{sessions,views,cache} bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
+
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
